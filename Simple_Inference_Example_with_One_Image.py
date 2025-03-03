@@ -5,6 +5,7 @@ from deepseek_vl2.models import DeepseekVLV2Processor, DeepseekVLV2ForCausalLM
 from deepseek_vl2.utils.io import load_pil_images
 
 vl_dtype = torch.float16   # torch.bfloat16 is expected.
+use_cuda = False
 
 # specify the path to the model
 model_path = "deepseek-ai/deepseek-vl2-tiny"
@@ -12,7 +13,7 @@ vl_chat_processor: DeepseekVLV2Processor = DeepseekVLV2Processor.from_pretrained
 tokenizer = vl_chat_processor.tokenizer
 
 vl_gpt: DeepseekVLV2ForCausalLM = AutoModelForCausalLM.from_pretrained(model_path, trust_remote_code=True)
-vl_gpt = vl_gpt.to(vl_dtype).eval()
+vl_gpt = vl_gpt.to(vl_dtype).cuda().eval() if use_cuda else vl_gpt.to(vl_dtype).eval()
 
 ## single image conversation example
 ## Please note that <|ref|> and <|/ref|> are designed specifically for the object localization feature. These special tokens are not required for normal conversations.
